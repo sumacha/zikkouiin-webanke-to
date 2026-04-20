@@ -14,29 +14,35 @@ color:white;
 display:flex;
 justify-content:center;
 }
+
 .container{
 width:100%;
 max-width:420px;
 padding:20px;
 text-align:center;
 }
+
 h2{
 font-size:16px;
 margin:25px 0 15px;
 }
+
 .choices{
 display:flex;
 justify-content:center;
 gap:10px;
 }
+
 .choice{
 cursor:pointer;
 width:110px;
 }
+
 .choice img{
 width:100%;
 border-radius:12px;
 }
+
 textarea{
 width:100%;
 height:160px;
@@ -46,6 +52,7 @@ border:none;
 background:rgba(255,255,255,0.08);
 color:white;
 }
+
 button{
 margin-top:20px;
 width:100%;
@@ -54,6 +61,16 @@ border:none;
 border-radius:12px;
 background:linear-gradient(90deg,#6a7cff,#8f9cff);
 color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+.error{
+color:#ff6b6b;
+font-size:13px;
+margin-top:6px;
+text-align:left;
+display:none;
 }
 </style>
 </head>
@@ -86,11 +103,19 @@ data-on="https://i.imgur.com/7PWkgwT.png">
 
 </div>
 
+<div id="errorChoice" class="error">
+分掌を選択してください
+</div>
+
 <h2>
 実施する企画と説明（時間や順番、内容など決まっているもの）を記入してください
 </h2>
 
 <textarea id="content"></textarea>
+
+<div id="errorText" class="error">
+企画内容を入力してください
+</div>
 
 <form id="form"
 action="https://script.google.com/macros/s/AKfycbwQG3IInMD9RE4VH8meyFC-joQnEWpPJFknE9VejMbrrLXTzj7pDrAvfS2BrBoHqfwbdw/exec"
@@ -121,19 +146,44 @@ e.querySelector("img").src=e.dataset.off;
 });
 el.querySelector("img").src=el.dataset.on;
 selected=el.dataset.value;
+
+document.getElementById("errorChoice").style.display="none";
 };
 });
 
-document.getElementById("form").onsubmit=()=>{
+document.getElementById("content").addEventListener("input",()=>{
+document.getElementById("errorText").style.display="none";
+});
+
+document.getElementById("form").onsubmit=(e)=>{
+
+let valid=true;
+
+const text=document.getElementById("content").value.trim();
+
+if(!selected){
+document.getElementById("errorChoice").style.display="block";
+valid=false;
+}
+
+if(!text){
+document.getElementById("errorText").style.display="block";
+valid=false;
+}
+
+if(!valid){
+e.preventDefault();
+return;
+}
+
 document.getElementById("department").value=selected;
-document.getElementById("content_hidden").value=
-document.getElementById("content").value;
+document.getElementById("content_hidden").value=text;
 
-alert("送信しました");
-
+// 送信後遷移
 setTimeout(()=>{
-document.getElementById("content").value="";
+window.location.href="thanks.html";
 },300);
+
 };
 </script>
 
